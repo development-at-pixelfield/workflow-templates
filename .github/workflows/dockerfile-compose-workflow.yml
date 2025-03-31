@@ -11,9 +11,6 @@ on:
       GCLOUD_DOCKER_FILE:
         required: true
         type: string
-      DOCKER_PATH:
-        required: true
-        type: string
     secrets:
       GCP_CREDENTIALS:
         required: true
