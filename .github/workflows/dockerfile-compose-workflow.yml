@@ -11,6 +11,9 @@ on:
       GCLOUD_DOCKER_FILE:
         required: true
         type: string
+    secrets:
+      GCP_CREDENTIALS:
+        required: true
 
 # jobs define all steps through which the pipeline goes
 jobs:     
@@ -48,4 +51,3 @@ jobs:
             --cache-from=type=registry,ref=${{ inputs.GCLOUD_DOCKER_FILE }}:cacheout \
             --cache-to=type=registry,ref=${{ inputs.GCLOUD_DOCKER_FILE }}:cachein,mode=max \
             --push .
-            shell: /usr/bin/bash -e
