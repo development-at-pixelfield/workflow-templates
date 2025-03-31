@@ -1,6 +1,5 @@
 name: Connect to Google Cloud VM and update server
 
-
 on:
   workflow_call:
     inputs:
