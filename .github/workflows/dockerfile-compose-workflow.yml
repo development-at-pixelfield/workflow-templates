@@ -35,6 +35,10 @@ jobs:
         with:
           version: latest
  
-      - name: Build and Push Docker Image
+      - name: Build Docker from cache
         run: | 
-          docker build --tag "${{ inputs.GCLOUD_DOCKER_FILE }}:latest" --push .
+            docker buildx build \
+            --tag ${{ inputs.GCLOUD_DOCKER_FILE }}:test \
+            --cache-from=type=registry,ref=${{ inputs.GCLOUD_DOCKER_FILE }}:cacheout \
+            --cache-to=type=registry,ref=${{ inputs.GCLOUD_DOCKER_FILE }}:cachein,mode=max \
+            --push .
