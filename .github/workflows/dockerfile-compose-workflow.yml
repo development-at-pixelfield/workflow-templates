@@ -14,34 +14,40 @@ on:
     secrets:
       GCP_CREDENTIALS:
         required: true
+        type: string
 
-# jobs define all steps through which the pipeline goes
 jobs:     
   docker-image-buildPush:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
+ 
       - name: GCloud authentification
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-
+ 
       - name: Conf Docker to use GAR
         run: gcloud auth configure-docker ${{ inputs.GCLOUD_ZONE }}.pkg.dev
-
+ 
       - name: Set up docker buildx
         uses: docker/setup-buildx-action@v2
         with:
           version: latest
-        
-      - name: Build and Push Docker image with Cache
+ 
+      - name: Cache docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-docker-${{ hashFiles(inputs.DOCKERFILE_PATH) }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+ 
+      - name: Build Docker from cache
         run: | 
-          docker buildx build \
+            docker buildx build \
             --tag ${{ inputs.GCLOUD_DOCKER_FILE }}:test \
-            --file ${{ inputs.DOCKERFILE_PATH }} \ # Use the Dockerfile path input
-            --cache-from=type=registry,ref=${{ inputs.GCLOUD_DOCKER_FILE }}:latest \ # Attempt to pull cache from latest
-            --cache-to=type=inline \ # Embed cache metadata in the pushed image
-            --push \
-            .
+            --cache-from=type=registry,ref=${{ inputs.GCLOUD_DOCKER_FILE }}:cacheout \
+            --cache-to=type=registry,ref=${{ inputs.GCLOUD_DOCKER_FILE }}:cachein,mode=max \
+            --push .
