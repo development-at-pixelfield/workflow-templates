@@ -1,0 +1,58 @@
+name: Connect to Google Cloud VM and update server
+
+on:
+  workflow_call:
+    inputs:
+      VM_ADDRESS:
+        required: true
+        type: string
+      VM_PORT:
+        required: true
+        type: string
+      VM_USERNAME:
+        required: true
+        type: string
+      SCRIPT_PATH:
+        required: true
+        type: string
+    secrets:
+      VM_PRIVATE_KEY:
+        required: true
+      GCP_CREDENTIALS:
+        required: true
+
+jobs:
+  connect-to-vm:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: GCloud authentification
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      
+      - name: Use gcloud CLI
+        run: gcloud info
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.VM_PRIVATE_KEY }}
+          known_hosts: unnecessary
+
+      # Add VM to known hosts
+      - name: Adding known hosts
+        run: ssh-keyscan -p ${{ inputs.VM_PORT }} -H ${{ inputs.VM_ADDRESS }} >> ~/.ssh/known_hosts
+
+      # Run update script on the VM
+      - name: Run update script on VM
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ inputs.VM_ADDRESS }}
+          username: ${{ inputs.VM_USERNAME }}
+          key: ${{ secrets.VM_PRIVATE_KEY }}
+          port: ${{ inputs.VM_PORT }}
+          script: ${{ inputs.SCRIPT_PATH }}
