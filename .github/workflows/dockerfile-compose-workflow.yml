@@ -35,18 +35,8 @@ jobs:
         with:
           version: latest
  
-      - name: Cache docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-docker-${{ hashFiles(inputs.DOCKERFILE_PATH) }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
- 
-      - name: Build Docker from cache
+      - name: Build and Push Docker Image
         run: | 
-            docker buildx build \
-            --tag ${{ inputs.GCLOUD_DOCKER_FILE }}:test \
-            --cache-from=type=registry,ref=${{ inputs.GCLOUD_DOCKER_FILE }}:cacheout \
-            --cache-to=type=registry,ref=${{ inputs.GCLOUD_DOCKER_FILE }}:cachein,mode=max \
+          docker buildx build \
+            --tag ${{ inputs.GCLOUD_DOCKER_FILE }}:latest \
             --push .
