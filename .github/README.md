@@ -16,7 +16,7 @@ To call this reusable workflow, include the following in your workflow file:
 ```yaml
 jobs:
   connect-to-vm:
-    uses: your-company/.github/workflows/ssh_vm_connection_and_update.yml@main
+    uses: development-at-pixelfield/workflow-templates/.github/workflows/ssh_vm_connection_and_update.yml@main
     with:
       VM_ADDRESS: "your-vm-address"
       VM_PORT: "your-vm-port"
