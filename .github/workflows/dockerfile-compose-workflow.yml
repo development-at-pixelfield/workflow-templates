@@ -14,7 +14,6 @@ on:
     secrets:
       GCP_CREDENTIALS:
         required: true
-        type: string
 
 jobs:     
   docker-image-buildPush:
