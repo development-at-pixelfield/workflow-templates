@@ -37,6 +37,4 @@ jobs:
  
       - name: Build and Push Docker Image
         run: | 
-          docker buildx build \\
-            --tag ${{ inputs.GCLOUD_DOCKER_FILE }}:latest \\
-            --push .
+          docker buildx build --tag ${{ inputs.GCLOUD_DOCKER_FILE }}:latest --push .
