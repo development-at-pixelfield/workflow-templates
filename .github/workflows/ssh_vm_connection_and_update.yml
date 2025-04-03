@@ -47,6 +47,18 @@ jobs:
       - name: Adding known hosts
         run: ssh-keyscan -p ${{ inputs.VM_PORT }} -H ${{ inputs.VM_ADDRESS }} >> ~/.ssh/known_hosts
 
+      - name: Clean up the server
+        uses: appleboy/ssh-action@1.2.2
+        with:
+          host: ${{ inputs.VM_ADDRESS }}
+          username: ${{ inputs.VM_USERNAME }}
+          key: ${{ secrets.VM_PRIVATE_KEY }}
+          port: ${{ inputs.VM_PORT }}
+          script: |
+            docker system prune -af
+            journalctl --vacuum-time=1d
+            echo "The space was freed successfully!"
+
       # Run update script on the VM
       - name: Run update script on VM
         uses: appleboy/ssh-action@v1.2.2
