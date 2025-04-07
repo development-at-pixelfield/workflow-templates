@@ -2,6 +2,10 @@ name: Terraform - VM
 
 on:
   workflow_call:
+    inputs:
+     DIR_PATH:
+       required: true
+       type: string
 
 jobs:
   terraform:
@@ -9,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: {{ $inputs.DIR_PATH }}
+        working-directory: ${{ inputs.DIR_PATH }}
 
     steps:
       - uses: actions/checkout@v3
