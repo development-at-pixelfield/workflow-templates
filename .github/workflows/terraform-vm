@@ -1,0 +1,29 @@
+name: Terraform - VM
+
+on:
+  workflow_call:
+
+jobs:
+  terraform:
+    name: 'Terraform Apply for VM'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: {{ $inputs.DIR_PATH }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        if: github.ref == 'refs/heads/main'
