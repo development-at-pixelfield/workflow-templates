@@ -33,6 +33,11 @@ jobs:
         with:
           terraform_version: 1.6.3
 
+      - name: Import existing resources
+        run: |
+          terraform import google_compute_firewall.allow_http_https projects/pfld-playground/global/firewalls/allow-http-https
+          terraform import google_compute_address.static_ip projects/pfld-playground/regions/europe-west2/addresses/vm-static-ip
+
       - name: Terraform Init
         run: terraform init
 
