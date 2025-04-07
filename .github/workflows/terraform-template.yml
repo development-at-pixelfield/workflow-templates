@@ -18,6 +18,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: GCloud authentification
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Use gcloud CLI
+        run: gcloud info
+
       - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.6.3
