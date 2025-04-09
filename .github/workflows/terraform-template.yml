@@ -46,7 +46,7 @@ jobs:
              terraform import google_compute_address.static_ip projects/pfld-playground/regions/europe-west2/addresses/vm-static-ip
 
       - name: Terraform Plan
-        run: terraform planm -var-file="terraform.tfvars"
+        run: terraform plan -var-file="terraform.tfvars"
 
       - name: Terraform Apply
         run: terraform apply -auto-approve -var-file="terraform.tfvars"
