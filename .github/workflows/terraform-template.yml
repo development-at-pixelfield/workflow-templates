@@ -9,7 +9,6 @@ on:
 
 jobs:
   terraform:
-    name: 'Terraform Apply for VM'
     runs-on: ubuntu-latest
     defaults:
       run:
