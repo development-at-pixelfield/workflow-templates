@@ -36,8 +36,8 @@ jobs:
         with:
           terraform_version: 1.6.3
 
-      - name: Delete cash
-        run: rm terraform.tfstate
+      - name: Refresh terraform
+        run: terraform refresh
 
       - name: Terraform Init
         run: terraform init
