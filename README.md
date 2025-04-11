@@ -1,3 +1,4 @@
+
 # 🚀 GitHub Workflows Repository
 
 This repository contains reusable GitHub Actions workflow templates for automating common tasks across our organization. ⚙️✨
@@ -40,6 +41,8 @@ jobs:
 - `VM_PRIVATE_KEY` - (✅ Required) Private SSH key for secure authentication.
 - `GCP_CREDENTIALS` - (✅ Required) Google Cloud authentication credentials.
 
+---
+
 ### 2. 🐳 Reusable Workflow: Build and Push Docker Image to GAR
 
 **📂 File:** `.github/workflows/dockerfile-compose-workflow.yml`
@@ -72,6 +75,40 @@ jobs:
 
 - `GCP_CREDENTIALS` - (✅ Required) Google Cloud authentication credentials.
 
+---
+
+### 3. 🔧 Reusable Workflow: Deploy Infrastructure with Terraform
+
+**📂 File:** `.github/workflows/terraform-template.yml`
+
+**📝 Description:**
+This reusable workflow automates the deployment of infrastructure on Google Cloud using **Terraform**. It supports the creation of resources like VMs and firewall rules and allows importing existing resources if necessary. 🌐🔧
+
+**🚀 Usage:**
+To call this reusable workflow, use the following configuration:
+
+```yaml
+jobs:
+  terraform:
+    uses: development-at-pixelfield/workflow-templates/.github/workflows/terraform-template.yml@master
+    with:
+      DIR_PATH: "path-to-your-terraform-directory"
+      IMPORT: true
+    secrets:
+      GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+```
+
+**⚙️ Inputs:**
+
+- `DIR_PATH` - (✅ Required) The path to your Terraform directory containing `.tf` files.
+- `IMPORT` - (✅ Required) Boolean to determine if existing resources should be imported. Set to `true` to import resources like firewall rules or static IP addresses.
+
+**🔑 Secrets:**
+
+- `GCP_CREDENTIALS` - (✅ Required) Google Cloud authentication credentials.
+
+---
+
 ## 🤝 How to Contribute
 
 - 🗂️ If you need to add a new workflow template, place it inside `.github/workflows/`.
@@ -85,4 +122,3 @@ This repository follows the company's standard licensing policy.
 ---
 
 💬 For questions or support, reach out to the DevOps team. 🚀
-
