@@ -1,1 +1,5 @@
-
+{
+    "name": "Pixelfield s.r.o. Workflow",
+    "description": "Pixelfield s.r.o. terraform workflow templates",
+    "iconName": "octicon GearIcon"
+}
