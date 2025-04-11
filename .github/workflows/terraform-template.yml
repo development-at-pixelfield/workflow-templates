@@ -9,6 +9,10 @@ on:
      IMPORT:
        required: true
        type: boolean
+     PROJECT_NAME:
+       required: true
+       type: string
+      
 
 jobs:
   terraform:
@@ -42,8 +46,11 @@ jobs:
       - name: Import firewall
         if: ${{ inputs.IMPORT == true }}
         run: | 
-             terraform import google_compute_firewall.allow_http_https projects/pfld-playground/global/firewalls/allow-http-https
-             terraform import google_compute_address.static_ip projects/pfld-playground/regions/europe-west2/addresses/vm-static-ip
+             terraform import google_compute_firewall.allow_http_https projects/${{ inputs.PROJECT_NAME }}/global/firewalls/allow-http-https
+             terraform import google_compute_address.static_ip projects/${{ inputs.PROJECT_NAME }}/regions/europe-west2/addresses/vm-static-ip
+
+      - name: Turn on all needed apis
+        run: terraform apply -target=google_project_service.apis -auto-approve
 
       - name: Terraform Plan
         run: terraform plan -var-file="terraform.tfvars"
