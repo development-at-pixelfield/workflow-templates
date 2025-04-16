@@ -11,6 +11,9 @@ on:
       GCLOUD_DOCKER_FILE:
         required: true
         type: string
+      GAR_TAG:
+        required: true
+        type: string
     secrets:
       GCP_CREDENTIALS:
         required: true
@@ -52,7 +55,7 @@ jobs:
       - name: Build Docker from cache
         run: | 
           docker buildx build \
-            --tag ${{ inputs.GCLOUD_DOCKER_FILE }}:test \
+            --tag ${{ inputs.GCLOUD_DOCKER_FILE }}:${{ inputs.GAR_TAG }} \
             --cache-from=type=registry,ref=${{ inputs.GCLOUD_DOCKER_FILE }}:cacheout \
             --cache-to=type=registry,ref=${{ inputs.GCLOUD_DOCKER_FILE }}:cachein,mode=max \
             --push \
