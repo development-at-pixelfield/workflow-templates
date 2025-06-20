@@ -15,6 +15,9 @@ on:
       image_name:
         required: true
         type: string
+      image_name_celery:
+        required: true
+        type: string
       ecr_region:
         required: false
         type: string
@@ -72,13 +75,13 @@ jobs:
 
       - name: Build and push Celery image
         run: |
-          IMAGE_NAME=${{ inputs.image_name }}
+          IMAGE_NAME=${{ inputs.image_name_celery }}
           ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
           IMAGE_URI=$ACCOUNT_ID.dkr.ecr.${{ inputs.ecr_region }}.amazonaws.com/$IMAGE_NAME:${{ inputs.ecr_tag }}
 
           docker buildx build \
             --file ${{ inputs.dockerfile_path_celery }} \
-            --tag $IMAGE_URI-celery \
+            --tag $IMAGE_URI \
             --cache-from type=local,src=/tmp/.buildx-cache \
             --cache-to type=local,dest=/tmp/.buildx-cache-new \
             --push .
