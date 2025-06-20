@@ -1,0 +1,90 @@
+name: Docker image push to AWS ECR
+
+on:
+  workflow_call:
+    inputs:
+      dockerfile_path:
+        required: true
+        type: string
+      dockerfile_path_celery:
+        required: true
+        type: string
+      ecr_tag:
+        required: true
+        type: string
+      image_name:
+        required: true
+        type: string
+      ecr_region:
+        required: false
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.ecr_region }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+          driver: docker-container
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE_NAME=${{ inputs.image_name }}
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          IMAGE_URI=$ACCOUNT_ID.dkr.ecr.${{ inputs.ecr_region }}.amazonaws.com/$IMAGE_NAME:${{ inputs.ecr_tag }}
+
+          docker buildx build \
+            --file ${{ inputs.dockerfile_path }} \
+            --tag $IMAGE_URI \
+            --cache-from type=local,src=/tmp/.buildx-cache \
+            --cache-to type=local,dest=/tmp/.buildx-cache-new \
+            --push .
+
+      - name: Build and push Celery image
+        run: |
+          IMAGE_NAME=${{ inputs.image_name }}
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          IMAGE_URI=$ACCOUNT_ID.dkr.ecr.${{ inputs.ecr_region }}.amazonaws.com/$IMAGE_NAME:${{ inputs.ecr_tag }}
+
+          docker buildx build \
+            --file ${{ inputs.dockerfile_path_celery }} \
+            --tag $IMAGE_URI-celery \
+            --cache-from type=local,src=/tmp/.buildx-cache \
+            --cache-to type=local,dest=/tmp/.buildx-cache-new \
+            --push .
+
+      - name: Move new cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mkdir /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
