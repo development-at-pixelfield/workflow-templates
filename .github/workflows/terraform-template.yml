@@ -60,6 +60,15 @@ on:
       REPO_ID:
         required: false
         type: string
+      BUCKET_NAME:
+        required: false
+        type: string
+      STORAGE_CLASS:
+        required: false
+        type: string
+      ENABLE_VERSION:
+        required: false
+        type: string
 
 jobs:
   terraform:
