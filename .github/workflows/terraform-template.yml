@@ -3,16 +3,63 @@ name: Terraform template
 on:
   workflow_call:
     inputs:
-     DIR_PATH:
-       required: true
-       type: string
-     IMPORT:
-       required: true
-       type: boolean
-     PROJECT_NAME:
-       required: true
-       type: string
-      
+      DIR_PATH:
+        required: true
+        type: string
+      IMPORT:
+        required: true
+        type: boolean
+      PROJECT_ID:
+        required: true
+        type: string
+      REGION:
+        required: false
+        type: string
+      VPC_NAME:
+        required: false
+        type: string
+      SUBNET_NAME:
+        required: false
+        type: string
+      SUBNET_IP_RANGE:
+        required: false
+        type: string
+      DB_VERSION:
+        required: false
+        type: string
+      DB_INSTANCE_NAME:
+        required: false
+        type: string
+      DB_USER:
+        required: false
+        type: string
+      DB_PASSWORD:
+        required: false
+        type: string
+      DB_NAME:
+        required: false
+        type: string
+      DB_TIER:
+        required: false
+        type: string
+      ZONE:
+        required: false
+        type: string
+      VM_NAME:
+        required: false
+        type: string
+      MACHINE_TYPE:
+        required: false
+        type: string
+      SERVICE_ACCOUNT_ID:
+        required: false
+        type: string
+      ROLES:
+        required: false
+        type: string
+      REPO_ID:
+        required: false
+        type: string
 
 jobs:
   terraform:
