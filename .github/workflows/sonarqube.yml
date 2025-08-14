@@ -6,9 +6,6 @@ on:
       HOST_URL:
         required: true
         type: string
-      SOURCES:
-        required: true
-        type: string
       SONAR_VERSION:
         required: true
         type: string
@@ -42,6 +39,6 @@ jobs:
           ./sonar-scanner/sonar-scanner-${{ inputs.SONAR_VERSION }}/bin/sonar-scanner \
             -Dsonar.projectKey=${{ secrets.PROJECT_KEY }} \
             -Dsonar.sources=. \
-            -Dsonar.host.url=${{ inputs.HOST_URL }} \
+            -Dsonar.host.url=${{ inputs.HOST_URL }}:9000 \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
             -Dsonar.qualitygate.wait=true
